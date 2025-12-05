@@ -144,7 +144,7 @@ function createTable(cols: Kol[], rows: Wiersz[], subTableIndex: number, totalLe
 
     if (cuttedRows.length >= subTableIndex + 1) {
       tableBody.push(
-        cuttedRows[subTableIndex].map((subItem: FP, index: number): TableCell => {
+        ...cuttedRows[subTableIndex].map((subItem: FP, index: number): TableCell => {
           return formatText(
             subItem._text ?? '',
             cols[index]._attributes?.Typ ? TableDataType[cols[index]._attributes.Typ] : FormatTyp.Value

@@ -119,7 +119,7 @@ function generateInformacje(stopka?: Stopka): Content[] {
 function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
   const result: Content = [];
 
-  if (additionalData?.qrCode && additionalData.nrKSeF) {
+  if (additionalData?.qrCode) {
     const qrCode: ContentQr | undefined = generateQRCode(additionalData.qrCode);
 
     result.push(createHeader('Sprawdź, czy Twoja faktura znajduje się w KSeF!'));
@@ -131,7 +131,7 @@ function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
               qrCode,
 
               {
-                stack: [formatText(additionalData.nrKSeF, FormatTyp.Default)],
+                stack: [formatText(additionalData.nrKSeF ?? 'offline', FormatTyp.Default)],
                 width: 'auto',
                 alignment: 'center',
                 marginLeft: 10,
@@ -151,6 +151,44 @@ function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
             ],
             link: additionalData.qrCode,
             margin: [10, (qrCode.fit ?? 120) / 2 - 30, 0, 0],
+            width: 'auto',
+          } as ContentStack,
+        ],
+      });
+    }
+  }
+
+  if (additionalData?.qrCode2) {
+    const qrCode2: ContentQr | undefined = generateQRCode(additionalData.qrCode2);
+
+    result.push(createHeader('Zweryfikuj wystawcę faktury'));
+    if (qrCode2) {
+      result.push({
+        columns: [
+          {
+            stack: [
+              qrCode2,
+              {
+                stack: [formatText('certyfikat', FormatTyp.Default)],
+                width: 'auto',
+                alignment: 'center',
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 10,
+              } as ContentStack,
+            ],
+            width: 150,
+          } as ContentStack,
+          {
+            stack: [
+              formatText(
+                'Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji wystawcy!',
+                FormatTyp.Value
+              ),
+              { stack: [formatText(additionalData.qrCode2, FormatTyp.Link)], marginTop: 5 },
+            ],
+            link: additionalData.qrCode2,
+            margin: [10, (qrCode2.fit ?? 120) / 2 - 30, 0, 0],
             width: 'auto',
           } as ContentStack,
         ],
