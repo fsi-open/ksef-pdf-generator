@@ -43287,7 +43287,6 @@ function pE(a) {
               stack: [nt(a.nrKSeF ?? "offline", rA.Default)],
               width: "auto",
               alignment: "center",
-              marginLeft: 10,
               marginRight: 10,
               marginTop: 10
             }
@@ -43311,21 +43310,22 @@ function pE(a) {
   }
   if (a?.qrCode2) {
     const L = q0(a.qrCode2);
-    R.push(St("Zweryfikuj wystawcę faktury")), L && R.push({
+    R.push(St("Zweryfikuj wystawcę faktury!")), L && (L.fit = 200, R.push({
       columns: [
         {
           stack: [
             L,
             {
-              stack: [nt("certyfikat", rA.Default)],
+              stack: [nt("CERTYFIKAT", rA.Default)],
               width: "auto",
               alignment: "center",
-              marginLeft: 10,
-              marginRight: 10,
+              marginLeft: 0,
+              // ECDSA certificate QR Code fit almost full width so we need to increase margin
+              marginRight: a.qrCode2.length > 300 ? 28 : 18,
               marginTop: 10
             }
           ],
-          width: 150
+          width: 200
         },
         {
           stack: [
@@ -43333,14 +43333,18 @@ function pE(a) {
               "Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji wystawcy!",
               rA.Value
             ),
-            { stack: [nt(a.qrCode2, rA.Link)], marginTop: 5 }
+            {
+              stack: [nt(a.qrCode2.substring(0, 150) + "...", rA.Link)],
+              marginTop: 5
+            }
           ],
           link: a.qrCode2,
+          noWrap: !1,
           margin: [10, (L.fit ?? 120) / 2 - 30, 0, 0],
           width: "auto"
         }
       ]
-    });
+    }));
   }
   return me(R, !0);
 }

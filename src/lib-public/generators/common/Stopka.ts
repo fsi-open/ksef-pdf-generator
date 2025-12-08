@@ -129,12 +129,10 @@ function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
           {
             stack: [
               qrCode,
-
               {
                 stack: [formatText(additionalData.nrKSeF ?? 'offline', FormatTyp.Default)],
                 width: 'auto',
                 alignment: 'center',
-                marginLeft: 10,
                 marginRight: 10,
                 marginTop: 10,
               } as ContentStack,
@@ -161,23 +159,26 @@ function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
   if (additionalData?.qrCode2) {
     const qrCode2: ContentQr | undefined = generateQRCode(additionalData.qrCode2);
 
-    result.push(createHeader('Zweryfikuj wystawcę faktury'));
+    result.push(createHeader('Zweryfikuj wystawcę faktury!'));
     if (qrCode2) {
+      qrCode2.fit = 200;
+
       result.push({
         columns: [
           {
             stack: [
               qrCode2,
               {
-                stack: [formatText('certyfikat', FormatTyp.Default)],
+                stack: [formatText('CERTYFIKAT', FormatTyp.Default)],
                 width: 'auto',
                 alignment: 'center',
-                marginLeft: 10,
-                marginRight: 10,
+                marginLeft: 0,
+                // ECDSA certificate QR Code fit almost full width so we need to increase margin
+                marginRight: additionalData.qrCode2.length > 300 ? 28 : 18,
                 marginTop: 10,
               } as ContentStack,
             ],
-            width: 150,
+            width: 200,
           } as ContentStack,
           {
             stack: [
@@ -185,9 +186,13 @@ function generateQRCodeData(additionalData?: AdditionalDataTypes): Content[] {
                 'Nie możesz zeskanować kodu z obrazka? Kliknij w link weryfikacyjny i przejdź do weryfikacji wystawcy!',
                 FormatTyp.Value
               ),
-              { stack: [formatText(additionalData.qrCode2, FormatTyp.Link)], marginTop: 5 },
+              {
+                stack: [formatText(additionalData.qrCode2.substring(0, 150) + '...', FormatTyp.Link)],
+                marginTop: 5,
+              },
             ],
             link: additionalData.qrCode2,
+            noWrap: false,
             margin: [10, (qrCode2.fit ?? 120) / 2 - 30, 0, 0],
             width: 'auto',
           } as ContentStack,
